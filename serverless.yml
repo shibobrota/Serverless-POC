@@ -42,11 +42,9 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  # Consents:
-  #   handler: services/Consents/handler.handler\
+  # Create-User:
   - ${file(./services/Create-User/Create-User.yml)}
-  # Consents-Consent-id:
-  #   handler: services/Consents-Consent-id/handler.handler
+  # Get-Data:
   - ${file(./services/Get-Data/Get-Data.yml)}
 
 #    The following are a few example events you can configure
