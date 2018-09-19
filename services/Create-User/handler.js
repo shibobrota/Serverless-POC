@@ -5,7 +5,7 @@ responseBody.message +=" New Addition."
   var response = {
       "statusCode": 200,
       "headers": {
-          "my_header": "my_value"
+        "my_Sample_header": "value"
       },
       "body": JSON.stringify(responseBody),
       "isBase64Encoded": false

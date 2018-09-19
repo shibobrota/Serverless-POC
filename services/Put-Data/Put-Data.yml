@@ -41,17 +41,3 @@
 #    Define function environment variables here
 #    environment:
 #      variable2: value2
-
-# My Sample Config.
-# dashboard:
-# handler: src/common/dashboard.dashboard
-# role: 'arn:aws:iam::587273692666:role/lambda_basic_code'
-# timeout: 30
-# events:
-# - http:
-# path: ui/dashboard/
-# method: get
-# request: 
-# parameters: 
-# paths: 
-# id: false
