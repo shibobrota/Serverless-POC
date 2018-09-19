@@ -48,6 +48,8 @@ functions:
   - ${file(./services/Get-Data/Get-Data.yml)}
   # Put-Data:
   - ${file(./services/Put-Data/Put-Data.yml)}
+  # lambda-integration:
+  - ${file(./services/lambda-integration/lambda-integration.yml)}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
