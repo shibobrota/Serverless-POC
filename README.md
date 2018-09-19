@@ -172,7 +172,7 @@ Example: ```services/lambda-integration```
       - http:
           path: lambda-integration/
           method: POST
-          integration: lambda
+          integration: lambda # This differentiates the configuration of Lambda-Proxy from Lambda-Integration
           cors: 
             origin: '*'
             headers:
@@ -203,3 +203,35 @@ exports.handler = (event, context, callback) => {
 };
 
 ```
+
+#### Enabling CORS and Allowing specific Header
+Code follows, where we will enable CORS and allow my-custom-access-token through Gateway:
+```sh
+lambda-integration:
+    handler: your service handler
+        timeout: 30 #some timeout
+        events:
+          - http:
+              path: some-path/
+              method: POST  #Any thing(GET,PUT,DELETE)
+              integration: lambda
+              # For Default CORS Configuration 
+              cors:true
+              # For Custom Configuration
+              cors: 
+                origin: '*'
+                headers:
+                  - Content-Type
+                  - X-Amz-Date
+                  - Authorization
+                  - X-Api-Key
+                  - X-Amz-Security-Token
+                  - X-Amz-User-Agent
+                  - my-custom-access-token  # This Allows my custom header through API Gateway else it may throw errors like not allowed through CORS 
+                allowCredentials: false
+```
+
+
+
+
+**ENDS HERE - Thanks! For Reading.**
