@@ -1,16 +1,17 @@
 
-  Create-User:
-    handler: services/Create-User/handler.handler
+  Put-Data:
+    handler: services/Put-Data/handler.handler
     timeout: 30
     events:
       - http:
-          path: Create-User/
-          method: post
-          request: 
-          parameters: 
-          paths: 
-          id: false
+          path: Put-Data/{token}
+          method: POST
           cors: true
+          request: 
+            parameters: 
+              paths: 
+                token: true
+              
 #    events:
 #      - http:
 #          path: users/create

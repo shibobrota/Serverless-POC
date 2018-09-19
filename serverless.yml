@@ -46,6 +46,8 @@ functions:
   - ${file(./services/Create-User/Create-User.yml)}
   # Get-Data:
   - ${file(./services/Get-Data/Get-Data.yml)}
+  # Put-Data:
+  - ${file(./services/Put-Data/Put-Data.yml)}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

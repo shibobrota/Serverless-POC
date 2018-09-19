@@ -1,7 +1,7 @@
 exports.handler = (event, context, callback) => {
 
-  var responseBody = {requestBody:event.body};
-
+  var responseBody = JSON.parse(event.body);
+responseBody.message +=" New Addition."
   var response = {
       "statusCode": 200,
       "headers": {
