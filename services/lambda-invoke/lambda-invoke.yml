@@ -1,8 +1,8 @@
 
   lambda-invoke:
-    handler: services/utility/handler.handler
+    handler: services/lambda-invoke/handler.handler
     timeout: 30
-    role: 'arn:aws:iam::1234567890xxxxxx:role/lambda_with_Invocation_access'
+    role: 'arn:aws:iam::1234567890xxx:role/lambda_with_Invocation_access'
     events:
       - http:
           path: lambda-invoke/
