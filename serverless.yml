@@ -8,7 +8,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   versionLambda: false
-  stage: dev
+  stage: alpha
   region: ap-south-1
   apiName: Serverless-POC
 
@@ -50,6 +50,10 @@ functions:
   - ${file(./services/Put-Data/Put-Data.yml)}
   # lambda-integration:
   - ${file(./services/lambda-integration/lambda-integration.yml)}
+  #utility
+  - ${file(./services/utility/utility.yml)}
+  #lambda-invoke
+  - ${file(./services/lambda-invoke/lambda-invoke.yml)}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
