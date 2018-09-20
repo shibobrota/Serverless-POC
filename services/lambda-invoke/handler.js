@@ -12,7 +12,7 @@ exports.handler = (event, context, callback) => {
       callback(error);
     }
     if (data) {
-      callback(null, data);
+      callback(null, { data:data, event:event});
     }
   });  
 

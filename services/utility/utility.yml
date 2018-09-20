@@ -4,7 +4,8 @@
     timeout: 30
     environment:
       handler: 18001900  
-      processId: "qwer-asdf-zxcv"        
+      processId: "qwer-asdf-zxcv"
+      apiPrefix: ${self:custom.API}-${self:custom.stage}-NotesTable        
 #    events:
 #      - http:
 #          path: users/create
