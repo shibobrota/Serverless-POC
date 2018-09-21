@@ -1,0 +1,10 @@
+
+  sqs-msg-receiver:
+    handler: services/sqs-msg-receiver/handler.handler
+    timeout: 30
+    environment:
+      ApiPrefix: ${self:custom.API}-${self:custom.stage}
+    events:
+    - sqs:
+        arn: arn:aws:sqs:ap-south-1:xxxxxxxxxx:SQS1
+        batchSize: 10
