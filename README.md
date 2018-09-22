@@ -234,4 +234,84 @@ lambda-integration:
 
 
 
+# SQS Queues!
+
+In the following example, we specify that the ```sqs-msg-receiver``` function should be triggered whenever there are messages in the given SQS Queue.:
+  - ```sqs-msg-receiver``` lambda function will be triggered whenever we put a message on SQS Queue named ```SQS1```
+  - We have already created the Queue on AWS with *```sqs:ReceiveMessage```* and *```sqs:SendMessage```* permissions.
+  - The lambda function which puts message on the Queue named ```SQS1``` is ```sqs-msg-sender```.
+
+
+#### example to put a message on SQS with minimal code.
+#### ```sqs-msg-sender/handler.js```
+
+```sh 
+const AWS = require('aws-sdk');
+AWS.config.update({ region: 'ap-south-1' });
+var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+
+exports.handler = (event, context, callback) => {
+
+  var responseBody = {message:"some data in string form", event: event, context: context};
+
+  var params = {
+      DelaySeconds: 0,
+      MessageBody: JSON.stringify(responseBody),
+      QueueUrl: process.env.sqsURL
+  };
+
+  sqs.sendMessage(params, function(err, data) {
+      if (err) {
+          console.log('error:' + err, null);
+          var responseObj = new Object();
+          responseObj.message = "SQS Error.";
+          responseObj.error = err;
+          callback(null, responseObj);
+      }
+      else {
+          console.log('data:', data.MessageId);
+          callback(null, data);
+      }
+  });
+};
+```
+
+#### Configuration associated with ```sqs-msg-receiver``` function to.
+#### ```sqs-msg-receiver.yml```
+
+```sh 
+sqs-msg-receiver:
+    handler: services/sqs-msg-receiver/handler.handler
+    timeout: 30
+    environment:
+      ApiPrefix: ${self:custom.API}-${self:custom.stage}
+    events:
+    - sqs:
+        arn: arn:aws:sqs:ap-south-1:xxxxxxxxxx:SQS1 # Replace it with your SQS ARN.
+        batchSize: 10
+```
+> This configuration automatically attaches this function to the created SQS Queue as the function to be triggered.
+
+> The js code for this will be same as normal lambda function. 
+
+#### Configuration to be done for creating SQS Queues right from you yml code.
+#### ```serverless.yml```
+> This should me written in the main file serverless.yml
+```sh
+ resources:
+   Resources:
+     MessagesQueue:
+       Type: AWS::SQS::Queue
+       Properties: 
+         QueueName: "SampleQueue-POC"
+     MessagesQueue1:
+       Type: AWS::SQS::Queue
+       Properties: 
+         QueueName: "SampleQueue-POC-1"
+```
+Here, we have created two Queues named ```SampleQueue-POC``` and ```SampleQueue-POC-1```.
+I shall be updating this document after adding configuration for Q permissions.
+Similarly, we can create DynamoDB tables right from your ```serverless.yml``` file.
+
+
 **ENDS HERE - Thanks! For Reading.**
