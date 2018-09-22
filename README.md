@@ -204,7 +204,7 @@ exports.handler = (event, context, callback) => {
 
 ```
 
-#### Enabling CORS and Allowing specific Header
+### Enabling CORS and Allowing specific Header
 Code follows, where we will enable CORS and allow my-custom-access-token through Gateway:
 ```sh
 lambda-integration:
