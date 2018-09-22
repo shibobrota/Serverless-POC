@@ -157,7 +157,7 @@ Request from the UI is sent directly to lambda function with all the parameters 
 ##### Response
 HTTP Status codes in the response messages like 200, 404 & 502 etc. needs to be sent by the lambda function. Example as follows.
 
-### Lambda-Integration
+## Lambda-Integration
 This is also an easy setup, provides more control over the API Life-cycle. The request data(such as path-params, query-string params etc.) could be mapped before it is passed to lambda and also the response from lambda can be modified after data is returned from lambda. This could be performed by using mapping templates which maps the data from the request to lambda function and again from lambda function to the calling entity. 
 Example: ```services/lambda-integration```
 
@@ -204,7 +204,7 @@ exports.handler = (event, context, callback) => {
 
 ```
 
-### Enabling CORS and Allowing specific Header
+## Enabling CORS and Allowing specific Header
 Code follows, where we will enable CORS and allow my-custom-access-token through Gateway:
 ```sh
 lambda-integration:
