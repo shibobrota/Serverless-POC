@@ -23,7 +23,7 @@ $ mkdir services
 
 
 
-### Project Structure
+## Project Structure
 
 Our Project structure is going to be like this:
 
@@ -109,9 +109,9 @@ provider:
 ###### Whenever we will be adding a new service, we need to define it here, in the above file.
 
 
-### LAMBDA PROXY
+## Lambda Proxy
 
-This is a simple yet powerful integration. The API request hitting APIGateway is forwarded straight to Lambda function, here the lambda fungtion gets the data in the **event** object and it does some processing as we write our code the the response is sent directly from Lambda(without any intervention of API Gateway). The response headers, status codes etc are not added to the response body by API Gateway.
+This is a simple yet important integration type. The API request hitting APIGateway is forwarded straight to Lambda function, here the lambda fungtion gets the data in the **event** object and it does some processing as we write our code the the response is sent directly from Lambda(without any intervention of API Gateway). The response headers, status codes etc are not added to the response body by API Gateway.
 
 Example: ```services/Create-User```
 
@@ -157,7 +157,7 @@ Request from the UI is sent directly to lambda function with all the parameters 
 ##### Response
 HTTP Status codes in the response messages like 200, 404 & 502 etc. needs to be sent by the lambda function. Example as follows.
 
-### LAMBDA-INTEGRATION
+### Lambda-Integration
 This is also an easy setup, provides more control over the API Life-cycle. The request data(such as path-params, query-string params etc.) could be mapped before it is passed to lambda and also the response from lambda can be modified after data is returned from lambda. This could be performed by using mapping templates which maps the data from the request to lambda function and again from lambda function to the calling entity. 
 Example: ```services/lambda-integration```
 
@@ -234,7 +234,7 @@ lambda-integration:
 
 
 
-# SQS Queues!
+## SQS Queues!
 
 In the following example, we specify that the ```sqs-msg-receiver``` function should be triggered whenever there are messages in the given SQS Queue.:
   - ```sqs-msg-receiver``` lambda function will be triggered whenever we put a message on SQS Queue named ```SQS1```
