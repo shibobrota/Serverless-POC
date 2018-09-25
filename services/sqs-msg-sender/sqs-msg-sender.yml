@@ -4,7 +4,7 @@
     timeout: 30
     environment:
       ApiPrefix: ${self:custom.API}-${self:custom.stage}
-      sqsURL: "https://sqs.ap-south-1.amazonaws.com/xxxxxxxxxxxx/SQS1"
+      sqsURL: ${self:provider.environment.sqsURL}
     events:
       - http:
           path: sqs-msg-sender/

@@ -1,8 +1,4 @@
-service: Serverless-POC # NOTE: update this with your service name
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
+service: Serverless-POC 
 
 provider:
   name: aws
@@ -11,42 +7,31 @@ provider:
   stage: ${opt:stage, 'alpha'}
   region: ap-south-1
   apiName: Serverless-POC
-  # environment:
-  #   sqs1:
-  #     Ref: MessagesQueue
-  #   sqs2:
-  #     Ref: MessagesQueue1
+  environment:
+    sqsName: 
+      Fn::GetAtt: 
+        - "FirstQueue"
+        - "QueueName" 
+    sqsURL: 
+      Ref: "FirstQueue"
+    sqsARN:  
+      Fn::GetAtt: 
+        - "FirstQueue"
+        - "Arn"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - sqs:ReceiveMessage
+        - sqs:SendMessage
+      Resource: ${self:provider.environment.sqsARN}
+      
 custom:
-  stage: ${opt:stage, 'alpha'}
+  stage: ${self:provider.stage}
   API: ${self:service}
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+  prefix: ${self:service}-${self:provider.stage}-
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  
 
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
 
 functions:
   # Create-User:
@@ -66,13 +51,9 @@ functions:
   # sqs-msg-receiver
   - ${file(./services/sqs-msg-receiver/sqs-msg-receiver.yml)}
 
-# resources:
-#   Resources:
-#     MessagesQueue:
-#       Type: AWS::SQS::Queue
-#       Properties: 
-#         QueueName: "SampleQueue-POC"
-#     MessagesQueue1:
-#       Type: AWS::SQS::Queue
-#       Properties: 
-#         QueueName: "SampleQueue-POC-1"
+resources:
+  Resources:
+    FirstQueue:
+      Type: AWS::SQS::Queue
+      Properties: 
+        QueueName: ${self:custom.prefix}Queue

@@ -6,7 +6,9 @@
       handler: 18001900  
       processId: "qwer-asdf-zxcv"
       apiPrefix: ${self:custom.API}-${self:custom.stage}-NotesTable        
-      # queue1: ${self:provider.environment.sqs1}
+      p1: ${self:provider.environment.sqsName}
+      p2: ${self:provider.environment.sqsURL}
+      p3: ${self:provider.environment.sqsARN}
 #    events:
 #      - http:
 #          path: users/create

@@ -6,5 +6,5 @@
       ApiPrefix: ${self:custom.API}-${self:custom.stage}
     events:
     - sqs:
-        arn: arn:aws:sqs:ap-south-1:xxxxxxxxxx:SQS1
+        arn: ${self:provider.environment.sqsARN}
         batchSize: 10
