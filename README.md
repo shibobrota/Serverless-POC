@@ -276,39 +276,130 @@ exports.handler = (event, context, callback) => {
   });
 };
 ```
+#### ```sqs-msg-sender/sqs-msg-sender.yml```
+
+```sh 
+  sqs-msg-sender:
+    handler: services/sqs-msg-sender/handler.handler
+    timeout: 30
+    environment:
+      ApiPrefix: ${self:custom.API}-${self:custom.stage}
+      sqsURL: ${self:provider.environment.sqsURL}
+    events:
+      - http:
+          path: sqs-msg-sender/
+          method: POST
+          integration: lambda
+          cors: 
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - my-custom-access-token  # This Allows my custom header through API Gateway else it may throw errors like not allowed through CORS 
+            allowCredentials: false
+          request: 
+            passThrough: NEVER
+            template:
+              application/json: '{ "method": "$context.httpMethod", "body" : $input.json("$"), "headers": { #foreach($param in $input.params().header.keySet()) "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end #end } }'
+
+```
+
 
 #### Configuration associated with ```sqs-msg-receiver``` function to.
 #### ```sqs-msg-receiver.yml```
 
 ```sh 
-sqs-msg-receiver:
+  sqs-msg-receiver:
     handler: services/sqs-msg-receiver/handler.handler
     timeout: 30
     environment:
       ApiPrefix: ${self:custom.API}-${self:custom.stage}
     events:
     - sqs:
-        arn: arn:aws:sqs:ap-south-1:xxxxxxxxxx:SQS1 # Replace it with your SQS ARN.
+        arn: ${self:provider.environment.sqsARN}
         batchSize: 10
 ```
 > This configuration automatically attaches this function to the created SQS Queue as the function to be triggered.
+#### ```handler.js```
 
+```sh 
+  exports.handler = (event, context, callback) => {
+
+  var responseBody = {event: event, context: context};
+  console.log("RESPONSE: ",JSON.stringify(responseBody));
+  callback(null, "OK");
+};
+
+```
 > The js code for this will be same as normal lambda function. 
 
 #### Configuration to be done for creating SQS Queues right from you yml code.
 #### ```serverless.yml```
-> This should me written in the main file serverless.yml
+> This should be the final serverless.yml
 ```sh
- resources:
-   Resources:
-     MessagesQueue:
-       Type: AWS::SQS::Queue
-       Properties: 
-         QueueName: "SampleQueue-POC"
-     MessagesQueue1:
-       Type: AWS::SQS::Queue
-       Properties: 
-         QueueName: "SampleQueue-POC-1"
+ service: Serverless-POC 
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  versionLambda: false
+  stage: ${opt:stage, 'alpha'}
+  region: ap-south-1
+  apiName: Serverless-POC
+  environment:
+    sqsName: 
+      Fn::GetAtt: 
+        - "FirstQueue"
+        - "QueueName" 
+    sqsURL: 
+      Ref: "FirstQueue"
+    sqsARN:  
+      Fn::GetAtt: 
+        - "FirstQueue"
+        - "Arn"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - sqs:ReceiveMessage
+        - sqs:SendMessage
+      Resource: ${self:provider.environment.sqsARN}
+      
+custom:
+  stage: ${self:provider.stage}
+  API: ${self:service}
+  prefix: ${self:service}-${self:provider.stage}-
+
+  
+
+
+functions:
+  # Create-User:
+  - ${file(./services/Create-User/Create-User.yml)}
+  # Get-Data:
+  - ${file(./services/Get-Data/Get-Data.yml)}
+  # Put-Data:
+  - ${file(./services/Put-Data/Put-Data.yml)}
+  # lambda-integration:
+  - ${file(./services/lambda-integration/lambda-integration.yml)}
+  # utility
+  - ${file(./services/utility/utility.yml)}
+  # lambda-invoke
+  - ${file(./services/lambda-invoke/lambda-invoke.yml)}
+  # sqs-msg-sender
+  - ${file(./services/sqs-msg-sender/sqs-msg-sender.yml)}
+  # sqs-msg-receiver
+  - ${file(./services/sqs-msg-receiver/sqs-msg-receiver.yml)}
+
+resources:
+  Resources:
+    FirstQueue:
+      Type: AWS::SQS::Queue
+      Properties: 
+        QueueName: ${self:custom.prefix}Queue
 ```
 Here, we have created two Queues named ```SampleQueue-POC``` and ```SampleQueue-POC-1```.
 I shall be updating this document after adding configuration for Q permissions.
