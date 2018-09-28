@@ -401,8 +401,9 @@ resources:
       Properties: 
         QueueName: ${self:custom.prefix}Queue
 ```
-Here, we have created two Queues named ```SampleQueue-POC``` and ```SampleQueue-POC-1```.
-I shall be updating this document after adding configuration for Q permissions.
+Here, we have created one Queue named ```${self:custom.prefix}Queue``` which becomes ```Serverless-POC-alpha-Queue``` after compilation.
+I have used references for referring to Queue in the form ```${self: .....}```.
+
 Similarly, we can create DynamoDB tables right from your ```serverless.yml``` file.
 
 
