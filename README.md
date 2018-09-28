@@ -78,7 +78,7 @@ Service-Name
 ```
 ### Description
 
-Now we are done with the Project Structure. Next we need to wire things up.
+Now we are done with the Project Structure. Next we need to wire things up. 
 
 ##### **```Serverless-POC/serverless.yml```**
 
@@ -107,6 +107,7 @@ provider:
 ```
 
 ###### Whenever we will be adding a new service, we need to define it here, in the above file.
+###### In the above specified structure, clean up the your-service-name.yml file, write your own service specific code which will replace the  ```${file(./services/lambda-integration/your-service-name.yml)}``` declaration with your yml code in the main ```serverless.yml``` file.
 
 
 ## Lambda Proxy
