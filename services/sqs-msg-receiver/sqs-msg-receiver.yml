@@ -6,5 +6,5 @@
       ApiPrefix: ${self:custom.API}-${self:custom.stage}
     events:
     - sqs:
-        arn: ${self:provider.environment.sqsARN}
+        arn: ${self:provider.environment.secondQARN}
         batchSize: 10

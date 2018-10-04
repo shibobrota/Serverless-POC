@@ -1,13 +1,17 @@
 
-  sqs-msg-sender:
-    handler: services/sqs-msg-sender/handler.handler
+  Db-connection:
+    handler: services/Db-connection/handler.handler
     timeout: 30
     environment:
       ApiPrefix: ${self:custom.API}-${self:custom.stage}
-      sqsURL: ${self:provider.environment.secondQURL}
+      tableName: ${self:custom.tableName}
+      database: "SomeDatabase"
+      host: "tablename.***********.ap-south-1.rds.amazonaws.com"
+      password: "*****************"
+      port: 3306   
     events:
       - http:
-          path: sqs-msg-sender/
+          path: db-connection/
           method: POST
           integration: lambda
           cors: 
