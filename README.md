@@ -337,70 +337,9 @@ exports.handler = (event, context, callback) => {
 ```
 > The js code for this will be same as normal lambda function. 
 
-#### Configuration to be done for creating SQS Queues right from you yml code.
+#### Configuration to be done for creating SQS Queues right from your yml code.
 #### ```serverless.yml```
-> This should be the final serverless.yml
-```sh
- service: Serverless-POC 
 
-provider:
-  name: aws
-  runtime: nodejs8.10
-  versionLambda: false
-  stage: ${opt:stage, 'alpha'}
-  region: ap-south-1
-  apiName: Serverless-POC
-  environment:
-    sqsName: 
-      Fn::GetAtt: 
-        - "FirstQueue"
-        - "QueueName" 
-    sqsURL: 
-      Ref: "FirstQueue"
-    sqsARN:  
-      Fn::GetAtt: 
-        - "FirstQueue"
-        - "Arn"
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - sqs:ReceiveMessage
-        - sqs:SendMessage
-      Resource: ${self:provider.environment.sqsARN}
-      
-custom:
-  stage: ${self:provider.stage}
-  API: ${self:service}
-  prefix: ${self:service}-${self:provider.stage}-
-
-  
-
-
-functions:
-  # Create-User:
-  - ${file(./services/Create-User/Create-User.yml)}
-  # Get-Data:
-  - ${file(./services/Get-Data/Get-Data.yml)}
-  # Put-Data:
-  - ${file(./services/Put-Data/Put-Data.yml)}
-  # lambda-integration:
-  - ${file(./services/lambda-integration/lambda-integration.yml)}
-  # utility
-  - ${file(./services/utility/utility.yml)}
-  # lambda-invoke
-  - ${file(./services/lambda-invoke/lambda-invoke.yml)}
-  # sqs-msg-sender
-  - ${file(./services/sqs-msg-sender/sqs-msg-sender.yml)}
-  # sqs-msg-receiver
-  - ${file(./services/sqs-msg-receiver/sqs-msg-receiver.yml)}
-
-resources:
-  Resources:
-    FirstQueue:
-      Type: AWS::SQS::Queue
-      Properties: 
-        QueueName: ${self:custom.prefix}Queue
-```
 Here, we have created one Queue named ```${self:custom.prefix}Queue``` which becomes ```Serverless-POC-alpha-Queue``` after compilation.
 I have used references for referring to Queue in the form ```${self: .....}```.
 
