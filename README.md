@@ -353,8 +353,17 @@ Here I shall describe about the dynamic creation of dynamodb using yml configura
 
 #### ```serverless.yml```
 ```sh
-    :
-    :
+custom:
+  stage: ${self:provider.stage}
+  API: ${self:service}
+  prefix: ${self:service}-${self:provider.stage}-
+  tableName: ${self:custom.prefix}Test-Table
+    #: some other code goes here 
+resources:
+  Resources:
+    #:
+    # other resource definition(If any)
+    #:
 # DynamoDb Table
     TestTable:
       Type: AWS::DynamoDB::Table
@@ -373,9 +382,95 @@ Here I shall describe about the dynamic creation of dynamodb using yml configura
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-
 ```
 The Table name is defined in the custom variables for avoiding redundency & errors. Here I have two attributes defined in the tabe, first is **sessionId** which will be of type String(```S```) and this will be used for hashing i.e., type ```HASH``` and the second key is **status**  which will be of type String(```S```) and will be used as partition key, hence type```RANGE```.
+
+
+### **Access dynamoDB from Lanmbda - Put item into DB**
+Here we will put data into the dynamoDB which we created above. Sample Code as follows:
+#### ```handler.js```
+```sh 
+const AWS = require('aws-sdk');
+/** docClient is for using DynamoDB **/
+const docClient = new AWS.DynamoDB.DocumentClient({ region: 'ap-south-1' });
+
+exports.handler = (event, context, callback) => {
+
+  var responseBody = {event: event, context: context};
+  var date = new Date();
+  var params = {
+    Item: {
+      sessionId: Date.now()+"" ,
+      status:"ACTIVE",
+      data: {
+        event: event, 
+        context: context
+      }
+    },
+    TableName: process.env['tableName']
+  };
+
+  docClient.put(params, function(error, data) {
+    if (error) {
+      console.log(error);
+      responseBody.message = error;
+      callback(null, responseBody);
+    }
+    else {
+      console.log(data);
+      responseBody.message = data;
+      callback(null, responseBody);
+    }
+  });
+};
+
+```
+
+The table name is specified in the yml file as **environment** variable.
+```sh
+environment:
+      tableName: ${self:custom.tableName}
+```
+Now, we are all set with the resource configuration and code to access DynamoDB.
+
+##### We are **MISSING** the permissions for dynamoDB. Lets look into inline permissions of serverless -  **```iamRoleStatements```**.
+Next, we shall look into iamRoleStatements.
+
+# **IAM Roles - iamRoleStatements**
+Here I shall describe about the aws IAM roles in yml for inline configuration:
+
+### **Permissions for DynamoDB, SQS & Lambda Invocation.**
+   In the configuration file **```serverless.yml```**, we will write the code.
+   
+   ```sh
+  iamRoleStatements:
+  # SQS Permissions
+    - Effect: "Allow"
+      Action:
+        - sqs:ReceiveMessage
+        - sqs:SendMessage
+      Resource: 
+        - "Fn::GetAtt": [ FirstQueue, Arn ]
+        - "Fn::GetAtt": [ SecondQueue, Arn ]
+  # DynamoDb Permissions
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "Fn::GetAtt": [ TestTable, Arn ] 
+  # Lambda Invoke Permissions  
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: "*"
+   ```
+
 
 
 **ENDS HERE - Thanks! For Reading.**
