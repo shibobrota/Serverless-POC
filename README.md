@@ -338,12 +338,44 @@ exports.handler = (event, context, callback) => {
 > The js code for this will be same as normal lambda function. 
 
 #### Configuration to be done for creating SQS Queues right from your yml code.
-#### ```serverless.yml```
 
 Here, we have created one Queue named ```${self:custom.prefix}Queue``` which becomes ```Serverless-POC-alpha-Queue``` after compilation.
 I have used references for referring to Queue in the form ```${self: .....}```.
 
 Similarly, we can create DynamoDB tables right from your ```serverless.yml``` file.
+
+# **Creating Resources - DynamoDB**
+Here I shall describe about the dynamic creation of dynamodb using yml configuration:
+
+### **Creating a DynamoDB table and defining it's schema:**
+   In the configuration file **```serverless.yml```**, under the ```resources```, we will write the cloudformation code.
+  
+
+#### ```serverless.yml```
+```sh
+    :
+    :
+# DynamoDb Table
+    TestTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: sessionId
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+        KeySchema:
+          - AttributeName: sessionId
+            KeyType: HASH
+          - AttributeName: status
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+```
+The Table name is defined in the custom variables for avoiding redundency & errors. Here I have two attributes defined in the tabe, first is **sessionId** which will be of type String(```S```) and this will be used for hashing i.e., type ```HASH``` and the second key is **status**  which will be of type String(```S```) and will be used as partition key, hence type```RANGE```.
 
 
 **ENDS HERE - Thanks! For Reading.**
